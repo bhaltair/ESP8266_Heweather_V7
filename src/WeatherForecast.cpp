@@ -58,7 +58,15 @@ void WeatherForecast::_parseNowJson(String payload) {
                           JSON_OBJECT_SIZE(5) + 3*JSON_OBJECT_SIZE(26) + 1320;
   DynamicJsonDocument doc(capacity);
 
-  deserializeJson(doc, payload);
+  DeserializationError error = deserializeJson(doc, payload);
+
+  if (error) {
+    #ifdef DEBUG
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    #endif DEBUG
+    return;
+  }
 
   const char* code = doc["code"];
   const char* updateTime = doc["updateTime"];
@@ -72,18 +80,27 @@ void WeatherForecast::_parseNowJson(String payload) {
   _daily_sunrise_str[0] = daily_0["sunrise"].as<String>();
   _daily_sunrise_str[1] = daily_1["sunrise"].as<String>();
   _daily_sunrise_str[2] = daily_2["sunrise"].as<String>();
+
+  _daily_fxDate_str[0] = daily_0["fxDate"].as<String>();
+  _daily_fxDate_str[1] = daily_1["fxDate"].as<String>();
+  _daily_fxDate_str[2] = daily_2["fxDate"].as<String>();
+
   _daily_tempMax_int[0] = daily_0["tempMax"].as<int>();
   _daily_tempMax_int[1] = daily_1["tempMax"].as<int>();
   _daily_tempMax_int[2] = daily_2["tempMax"].as<int>();
+
   _daily_tempMin_int[0] = daily_0["tempMin"].as<int>();
   _daily_tempMin_int[1] = daily_1["tempMin"].as<int>();
   _daily_tempMin_int[2] = daily_2["tempMin"].as<int>();
+
   _daily_iconDay_int[0] = daily_0["iconDay"].as<int>();
   _daily_iconDay_int[1] = daily_1["iconDay"].as<int>();
   _daily_iconDay_int[2] = daily_2["iconDay"].as<int>();
+
   _daily_textDay_str[0] = daily_0["textDay"].as<String>();
   _daily_textDay_str[1] = daily_1["textDay"].as<String>();
   _daily_textDay_str[2] = daily_2["textDay"].as<String>();
+
   _daily_windDirDay_str[0] = daily_0["windDirDay"].as<String>();
   _daily_windDirDay_str[1] = daily_1["windDirDay"].as<String>();
   _daily_windDirDay_str[2] = daily_2["windDirDay"].as<String>();
@@ -111,6 +128,10 @@ String WeatherForecast::getLastUpdate() {
   return _last_update_str;
 }
 
+String WeatherForecast::getFxDate(int index) {
+  return _daily_fxDate_str[index];
+}
+
 // 返回日出时间
 String WeatherForecast::getSunRise(int index) {
   return _daily_sunrise_str[index];
@@ -135,6 +156,7 @@ int WeatherForecast::getIconDay(int index) {
 String WeatherForecast::getTextDay(int index) {
   return _daily_textDay_str[index];
 }
+
 
 // 返回白天风向
 String WeatherForecast::getWindDirDay(int index) {

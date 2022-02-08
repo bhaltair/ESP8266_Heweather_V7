@@ -29,6 +29,8 @@ void loop(){
       Serial.println(WeatherForecast.getServerCode());    // 获取API状态码
       Serial.print(F("Last Update: "));
       Serial.println(WeatherForecast.getLastUpdate());    // 获取服务器更新天气信息时间
+      Serial.print(F("Fx Data: "));
+      Serial.println(WeatherForecast.getFxDate(i));    // 获取预测的时间
       Serial.print(F("TempMax: "));
       Serial.println(WeatherForecast.getTempMax(i));      // 获取最高温度
       Serial.print(F("TempMin: "));

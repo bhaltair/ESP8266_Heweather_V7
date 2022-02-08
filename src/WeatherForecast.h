@@ -16,6 +16,7 @@ class WeatherForecast {
     bool get();
     String getServerCode();
     String getLastUpdate();
+    String getFxDate(int index);
     String getSunRise(int index);
     int getTempMax(int index);
     int getTempMin(int index);
@@ -41,9 +42,11 @@ class WeatherForecast {
     String _response_code = "no_init";           // API状态码
     String _last_update_str = "no_init";         // API最近更新时间
     String _daily_sunrise_str[3] = {"no_init", "no_init", "no_init"}; // 日出时间
+    String _daily_fxDate_str[3] = {"no_init", "no_init", "no_init"}; // 预测的日期
     int _daily_tempMax_int[3] = {999, 999, 999}; // 最高气温
     int _daily_tempMin_int[3] = {999, 999, 999}; // 最低气温
     int _daily_iconDay_int[3] = {999, 999, 999}; // 白天天气状况的图标代码
+    
     String _daily_textDay_str[3] = {"no_init", "no_init", "no_init"};      // 天气状况的文字描述
     String _daily_windDirDay_str[3] = {"no_init", "no_init", "no_init"};   // 白天风向
     String _daily_windScaleDay_str[3] = {"no_init", "no_init", "no_init"}; // 白天风力等级

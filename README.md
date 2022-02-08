@@ -1,12 +1,12 @@
 # ESP8266_Heweather
 
-- [ESP8266_Heweather](#esp8266-heweather)
-  * [基本介绍](#基本介绍)
-  * [准备工作](#准备工作)
-  * [使用说明](#使用说明)
-    + [获取实时天气信息](#获取实时天气信息)
-    + [获取天气预报信息](#获取天气预报信息)
-    + [获取空气质量信息](#获取空气质量信息)
+- [ESP8266_Heweather](#esp8266_heweather)
+  - [基本介绍](#基本介绍)
+  - [准备工作](#准备工作)
+  - [使用说明](#使用说明)
+    - [获取实时天气信息](#获取实时天气信息)
+    - [获取天气预报信息](#获取天气预报信息)
+    - [获取空气质量信息](#获取空气质量信息)
 
 ## 基本介绍
 
@@ -80,6 +80,7 @@ WeatherForecast.config(UserKey, Location, Unit, Lang); // 配置请求信息
 WeatherForecast.getServerCode();    // 获取API状态码
 WeatherForecast.getLastUpdate();    // 获取服务器更新天气信息时间
 // 以下i取值为 0,1,2，分别代表今天，明天和后天
+WeatherForecast.getLastUpdate(i);    // 获取预测日期的时间
 WeatherForecast.getTempMax(i);      // 获取最高温度
 WeatherForecast.getTempMin(i);      // 获取最低温度
 WeatherForecast.getIconDay(i);      // 获取天气图标代码

@@ -27,7 +27,8 @@ class WeatherNow {
     float getPrecip();
 
   private:
-    const char* _host = "devapi.heweather.net"; // 服务器地址
+    // const char* _host = "devapi.heweather.net"; // 服务器地址
+    const char* _host = "192.168.16.133"; // 代理服务器地址
     const int httpsPort = 443;
 
     String _requserKey;  // 私钥

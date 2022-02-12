@@ -21,8 +21,10 @@ bool WeatherNow::get() {
   #ifdef DEBUG
   Serial.print("[HTTPS] begin...\n");
   #endif DEBUG
-  String url = "https://devapi.heweather.net/v7/weather/now?location=" + _reqLocation +
-              "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang + "&gzip=n";
+  String api = "https://192.168.16.133:2053"; // 代理地址
+  // String api = "https://devapi.heweather.net";
+  String url = api + "/v7/weather/now?location=" + _reqLocation +
+              "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
   if (https.begin(*client, url)) {  // HTTPS连接成功
     #ifdef DEBUG
     Serial.print("[HTTPS] GET...\n");

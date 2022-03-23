@@ -24,7 +24,7 @@ class AirQuality {
 
   private:
     const char* _host = "devapi.heweather.net"; // 服务器地址
-    const int httpsPort = 443;
+    const int httpsPort = 2053;
 
     String _requserKey;  // 私钥
     String _reqLocation; // 位置

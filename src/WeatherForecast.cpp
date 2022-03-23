@@ -18,7 +18,8 @@ bool WeatherForecast::get() {
   #ifdef DEBUG
   Serial.print("[HTTPS] begin...\n");
   #endif DEBUG
-  String api = "https://api.heweather.local:2053"; // https代理，用于gzip解压
+  //String api = "https://192.168.2.180:2053"; // 代理地址
+  String api = "https://api.heweather.local:2053"; // 代理地址
   // String api = "https://devapi.heweather.net";
   String url = api + "/v7/weather/3d?location=" + _reqLocation +
               "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";

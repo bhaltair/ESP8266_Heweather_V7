@@ -20,7 +20,8 @@ bool AirQuality::get() {
   #ifdef DEBUG
   Serial.print("[HTTPS] begin...\n");
   #endif DEBUG
-  String url = "https://devapi.heweather.net/v7/air/now?location=" + _reqLocation +
+  //String url = "https://devapi.heweather.net/v7/air/now?location=" + _reqLocation +
+  String url = "https://192.168.2.180:2053/v7/air/now?location=" + _reqLocation +
               "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang + "&gzip=n";
   if (https.begin(*client, url)) {  // HTTPS连接成功
     #ifdef DEBUG

@@ -11,30 +11,27 @@ void WeatherForecast::config(String userKey, String location, String unit, Strin
 }
 
 bool WeatherForecast::get() {
-  // https请求
-  std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
-  client->setInsecure(); // 不进行服务器身份认证
-  HTTPClient https;
+  // http请求
+    WiFiClient client;
+    HTTPClient http;
   #ifdef DEBUG
-  Serial.print("[HTTPS] begin...\n");
+  Serial.print("[HTTP] begin...\n");
   #endif DEBUG
-  //String api = "https://192.168.2.180:2053"; // 代理地址
-  String api = "https://192.168.2.180:2053"; // 代理地址
-  // String api = "https://devapi.heweather.net";
+  String api = "http://192.168.2.180:8081";
   String url = api + "/v7/weather/3d?location=" + _reqLocation +
               "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
-  if (https.begin(*client, url)) {  // HTTPS连接成功
+  if (http.begin(client, url)) {  // HTTP连接成功
     #ifdef DEBUG
-    Serial.print("[HTTPS] GET...\n");
+    Serial.print("[HTTP] GET...\n");
     #endif DEBUG
-    int httpCode = https.GET(); // 请求
+    int httpCode = http.GET(); // 请求
 
     if (httpCode > 0) { // 错误返回负值
       #ifdef DEBUG
-      Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
       #endif DEBUG
       if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) { // 服务器响应
-        String payload = https.getString();
+        String payload = http.getString();
         #ifdef DEBUG
         Serial.println(payload);
         #endif DEBUG
@@ -43,14 +40,14 @@ bool WeatherForecast::get() {
       }
     } else { // 错误返回负值
       #ifdef DEBUG
-      Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+      Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
       #endif DEBUG
       return false;
     }
-    https.end();
-  } else { // HTTPS连接失败
+    http.end();
+  } else { // HTTP连接失败
     #ifdef DEBUG
-    Serial.printf("[HTTPS] Unable to connect\n");
+    Serial.printf("[HTTP] Unable to connect\n");
     #endif DEBUG
     return false;
   }

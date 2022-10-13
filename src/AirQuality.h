@@ -4,9 +4,9 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
-
 #include <ESP8266HTTPClient.h>
-#include <WiFiClientSecureBearSSL.h>
+#include <WiFiClient.h>
+
 
 // #define DEBUG   // 调试用
 

@@ -11,6 +11,7 @@ WeatherNow				KEYWORD1
 WeatherForecast			KEYWORD1
 AirQuality				KEYWORD1
 Weather24h				KEYWORD1
+HttpsGetUtils           KEYWORD1
 
 #######################################
 # 函数/Functions (KEYWORD2)

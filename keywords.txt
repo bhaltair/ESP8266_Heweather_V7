@@ -10,6 +10,7 @@
 WeatherNow				KEYWORD1
 WeatherForecast			KEYWORD1
 AirQuality				KEYWORD1
+Weather24h				KEYWORD1
 
 #######################################
 # 函数/Functions (KEYWORD2)
@@ -37,3 +38,4 @@ getUvIndex			KEYWORD2
 getAqi				KEYWORD2
 getCategory			KEYWORD2
 getPrimary			KEYWORD2
+

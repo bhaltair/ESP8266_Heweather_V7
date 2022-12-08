@@ -8,7 +8,7 @@
 #include <WiFiClient.h>
 
 
-// #define DEBUG // 调试用
+#define DEBUG // 调试用
 
 class WeatherNow {
   public:

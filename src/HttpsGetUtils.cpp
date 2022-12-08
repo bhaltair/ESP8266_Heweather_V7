@@ -87,7 +87,7 @@ bool HttpsGetUtils::fetchBuffer(const char *url) {
           int len = https.getSize();
 
           // create buffer for read
-          static uint8_t buff[16] = { 0 };
+          static uint8_t buff[256] = { 0 };
 
           // read all data from server
           int offset=0;
@@ -104,13 +104,6 @@ bool HttpsGetUtils::fetchBuffer(const char *url) {
               // Serial.println("memcpy");
               memcpy(_buffer+offset, buff, sizeof(uint8_t)*c);
               offset+=c;
-              if(c>0 && c!=16) {
-                log("======rb====");
-                Serial.printf("%d,", buff[c-3]);
-                Serial.printf("%d,", buff[c-2]);
-                Serial.printf("%d,", buff[c-1]);
-                log("\n======rb end====");
-              }
               // write it to Serial
               // Serial.write(buff, c);
               if (len > 0) {
@@ -139,14 +132,8 @@ bool HttpsGetUtils::fetchBuffer(const char *url) {
 bool HttpsGetUtils::getString(const char* url, uint8_t *& outbuf, size_t &outlen) {
   fetchBuffer(url);
   Serial.printf("\nAfter fetch, buffer size=%d\n", _bufferSize);
-  delay(1000);
   if(_bufferSize) {
-    // write it to Serial
-    log("===buf===");
-    Serial.printf("%d,", _bufferSize-3);
-    Serial.printf("%d,", _bufferSize-2);
-    Serial.printf("%d,", _bufferSize-1);
-    log("\n===buf end===");    
+    // write it to Serial 
     Serial.write(_buffer,_bufferSize);
     outbuf=(uint8_t*)malloc(sizeof(uint8_t)*12000);
     if(outbuf==NULL) log("outbuf allocate failed!");

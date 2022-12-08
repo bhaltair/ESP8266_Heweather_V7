@@ -1,4 +1,5 @@
 #include "Weather24h.h"
+#include "HttpsGetUtils.h"
 
 Weather24h::Weather24h() {
 }
@@ -12,54 +13,42 @@ void Weather24h::config(String userKey, String location, String unit, String lan
 
 bool Weather24h::get() {
   // http请求
-    WiFiClient client;
-    HTTPClient http;
   #ifdef DEBUG
   Serial.print("[HTTP] begin...\n");
   #endif DEBUG
   String api = "http://192.168.2.180:8081";
   String url = api + "/v7/weather/3d?location=" + _reqLocation +
               "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
-          url="http://192.168.2.144:8082";
-  if (http.begin(client, url)) {  // HTTP连接成功
-    #ifdef DEBUG
-    Serial.print("[HTTP] GET...\n");
-    #endif DEBUG
-    int httpCode = http.GET(); // 请求
-
-    if (httpCode > 0) { // 错误返回负值
-      #ifdef DEBUG
-      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-      #endif DEBUG
-      if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) { // 服务器响应
-        String payload = http.getString();
-        #ifdef DEBUG
-        Serial.println(payload);
-        #endif DEBUG
-        _parseNowJson(payload);
-        return true;
-      }
-    } else { // 错误返回负值
-      #ifdef DEBUG
-      Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-      #endif DEBUG
-      return false;
-    }
-    http.end();
-  } else { // HTTP连接失败
-    #ifdef DEBUG
-    Serial.printf("[HTTP] Unable to connect\n");
-    #endif DEBUG
-    return false;
+  url="https://192.168.2.144:8082";
+  uint8_t *outbuf=NULL;
+  size_t len=0;
+  HttpsGetUtils hg;
+  bool result = hg.getString("https://192.168.2.144:8082/test", outbuf, len);
+  Serial.printf("result=%d, len=%d", result, len);
+  if(outbuf && len){
+    Serial.printf("write to serial, buf=%x, len=%d\n", outbuf, len);
+    // Serial.write(outbuf, len);
+    Serial.println("parse json");
+      _parseNowJson((char*)outbuf,len);
+  } else {
+    Serial.println("获取24小时天气失败了");
   }
+  //一定要记得释放内存
+  Serial.println("clean outbuf");
+  if(outbuf!=NULL) {
+    free(outbuf);
+    outbuf=NULL;
+    Serial.printf("After clean, outbuf addr now=%x", outbuf);
+  }
+  return result;
 }
 
-void Weather24h::_parseNowJson(String payload) {
+void Weather24h::_parseNowJson(char *input, size_t inputLength) {
   // std::string input;
 
-DynamicJsonDocument doc(8192);
+DynamicJsonDocument doc(6144);
 
-DeserializationError error = deserializeJson(doc, payload);
+DeserializationError error = deserializeJson(doc, input, inputLength);
 
 if (error) {
   Serial.print(F("deserializeJson() failed: "));
@@ -77,6 +66,7 @@ for (JsonObject hourly_item : doc["hourly"].as<JsonArray>()) {
  _hourly_item_temp_int[i] = hourly_item["temp"].as<int>(); // "15", "13", "13", "12", "11", "11", "10", "10", ...
   _hourly_item_icon_int[i] = hourly_item["icon"].as<int>(); // "100", "150", "150", "150", "150", "150", "150", ...
   _hourly_item_text[i] = hourly_item["text"].as<String>(); // "晴", "晴", "晴", "晴", "晴", "晴", "晴", "多云", "多云", ...
+   Serial.printf("%s,", _hourly_item_text[i]);
   // const char* hourly_item_wind360 = hourly_item["wind360"]; // "22", "24", "30", "33", "33", "31", "30", ...
   // const char* hourly_item_windDir = hourly_item["windDir"]; // "东北风", "东北风", "东北风", "东北风", "东北风", "东北风", ...
   // const char* hourly_item_windScale = hourly_item["windScale"]; // "3-4", "3-4", "3-4", "3-4", "3-4", ...

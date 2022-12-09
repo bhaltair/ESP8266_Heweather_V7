@@ -11,14 +11,20 @@ void WeatherForecast::config(String userKey, String location, String unit, Strin
 }
 
 bool WeatherForecast::get() {
-  // String api = "http://192.168.2.180:8081";
-  // String url = api + "/v7/weather/3d?location=" + _reqLocation +
-  //             "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+  String api = "http://192.168.2.180:8081";
+  String url = api + "/v7/weather/3d?location=" + _reqLocation +
+              "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+
+  // String url = "http://192.168.2.144:8082/v7/weather/3d";
+  String str = HttpsGetUtils::get(url.c_str());
+  _parseNowJson(str);
+  return true;
+
+  /*
   const char* url="https://192.168.2.144:8082/v7/weather/3d";
   uint8_t *outbuf=NULL;
-  size_t len=0;
-  HttpsGetUtils hg;
-  bool result = hg.getString(url, outbuf, len);
+  size_t len=5000;
+  bool result = HttpsGetUtils::getString(url, outbuf, len);
   Serial.printf("result=%d, len=%d", result, len);
   if(outbuf && len){
     Serial.printf("write to serial, buf=%x, len=%d\n", outbuf, len);
@@ -36,11 +42,19 @@ bool WeatherForecast::get() {
     Serial.printf("After clean, outbuf addr now=%x", outbuf);
   }
   return result;
+  */
 }
 
-void WeatherForecast::_parseNowJson(char *input, size_t inputLength) {
-DynamicJsonDocument doc(1536);
-DeserializationError error = deserializeJson(doc, input, inputLength);
+// char*
+// void WeatherForecast::_parseNowJson(char *input, size_t inputLength) {
+// DynamicJsonDocument doc(1536);
+// DeserializationError error = deserializeJson(doc, input, inputLength);
+
+// String
+void WeatherForecast::_parseNowJson(String input) {
+DynamicJsonDocument doc(3072);
+DeserializationError error = deserializeJson(doc, input);
+
 
   if (error) {
     #ifdef DEBUG

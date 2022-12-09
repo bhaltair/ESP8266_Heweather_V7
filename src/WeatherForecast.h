@@ -3,9 +3,7 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#include <WiFiClient.h>
+
 
 
 #define DEBUG // 调试用
@@ -38,7 +36,8 @@ class WeatherForecast {
     String _reqUnit;     // 单位
     String _reqLang;     // 语言
 
-    void _parseNowJson(char* input, size_t inputLength); // 解析json信息
+    // void _parseNowJson(char* input, size_t inputLength); // 解析json信息
+    void _parseNowJson(String input);
 
     String _response_code = "no_init";           // API状态码
     String _last_update_str = "no_init";         // API最近更新时间

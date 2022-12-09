@@ -16,15 +16,20 @@ bool WeatherNow::get() {
   // #ifdef DEBUG
   // Serial.print("[HTTP] begin...\n");
   // #endif DEBUG
-  // String api = "http://192.168.2.180:8081";
-  // String url = api + "/v7/weather/now?location=" + _reqLocation +
-  //             "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
-            
+  String api = "http://192.168.2.180:8081";
+  String url = api + "/v7/weather/now?location=" + _reqLocation +
+              "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+  // String url = "http://192.168.2.144:8082/v7/weather/now";
+  String str = HttpsGetUtils::get(url.c_str());
+  _parseNowJson(str);
+  return true;
+
+
+  /**
   const char *url = "https://192.168.2.144:8082/v7/weather/now";
    uint8_t *outbuf=NULL;
-  size_t len=0;
-  HttpsGetUtils hg;
-  bool result = hg.getString(url, outbuf, len);
+  size_t len=2000;
+  bool result = HttpsGetUtils::getString(url, outbuf, len);
   Serial.printf("result=%d, len=%d", result, len);
   if(outbuf && len){
     Serial.printf("write to serial, buf=%x, len=%d\n", outbuf, len);
@@ -42,13 +47,19 @@ bool WeatherNow::get() {
     Serial.printf("After clean, outbuf addr now=%x", outbuf);
   }
   return result;
+  */
 }
 
 // 解析Json信息
-void WeatherNow::_parseNowJson(char* input, size_t inputLength) {
-StaticJsonDocument<512> doc;
+// void WeatherNow::_parseNowJson(char* input, size_t inputLength) {
+// StaticJsonDocument<512> doc;
+// DeserializationError error = deserializeJson(doc, input, inputLength);
 
-DeserializationError error = deserializeJson(doc, input, inputLength);
+void WeatherNow::_parseNowJson(String input) {
+StaticJsonDocument<768> doc;
+
+DeserializationError error = deserializeJson(doc, input);
+
 
   JsonObject now = doc["now"];
 

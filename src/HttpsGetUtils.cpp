@@ -1,5 +1,5 @@
 #include "HttpsGetUtils.h"
-#include "ArduinoZlib.h"
+// #include "ArduinoZlib.h" // gzip库
 
 HttpsGetUtils::HttpsGetUtils() {
 }
@@ -13,17 +13,8 @@ void log(const char *str) {
   Serial.println(str);
 }
 
-
-// 配置请求信息，私钥、位置、单位、语言
-void HttpsGetUtils::config(String userKey, String location, String unit, String lang) {
-  _requserKey = userKey;
-  _reqLocation = location;
-  _reqUnit = unit;
-  _reqLang = lang;
-}
-
 // 尝试获取信息，成功返回true，失败返回false
-bool HttpsGetUtils::get(const char *url) {
+String HttpsGetUtils::get(String url) {
   // https请求
     WiFiClient client;
     HTTPClient http;
@@ -31,7 +22,7 @@ bool HttpsGetUtils::get(const char *url) {
   #ifdef DEBUG
   Serial.print("[HTTP] begin...\n");
   #endif DEBUG
-  String api = "http://192.168.2.180:8081";
+  // String api = "http://192.168.2.180:8081";
   // String url = api + "/v7/weather/now?location=" + _reqLocation + "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
 
   if (http.begin(client, url)) {  // HTTP连接成功
@@ -47,25 +38,32 @@ bool HttpsGetUtils::get(const char *url) {
       if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) { // 服务器响应
         String payload = http.getString();
         #ifdef DEBUG
-        Serial.println(payload);
+        Serial.printf("payload size=%d\n", payload.length());
         #endif DEBUG
-        return true;
+        return payload;
       }
     } else { // 错误返回负值
       #ifdef DEBUG
       Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
       #endif DEBUG
-      return false;
+      return "";
     }
     http.end();
   } else { // HTTP连接失败
     #ifdef DEBUG
     Serial.printf("[HTTP] Unable to connect\n");
     #endif DEBUG
-    return false;
+    return "";
   }
 }
 
+// 配置请求信息，私钥、位置、单位、语言
+// void HttpsGetUtils::config(String userKey, String location, String unit, String lang) {
+//   _requserKey = userKey;
+//   _reqLocation = location;
+//   _reqUnit = unit;
+//   _reqLang = lang;
+// }
 bool HttpsGetUtils::fetchBuffer(const char *url) {
     _bufferSize=0;
     std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
@@ -88,7 +86,7 @@ bool HttpsGetUtils::fetchBuffer(const char *url) {
           int len = https.getSize();
 
           // create buffer for read
-          static uint8_t buff[256] = { 0 };
+          static uint8_t buff[128] = { 0 };
 
           // read all data from server
           int offset=0;
@@ -130,17 +128,19 @@ bool HttpsGetUtils::fetchBuffer(const char *url) {
     return _bufferSize>0;;
 }
 
+uint8_t HttpsGetUtils::_buffer[1280];
+size_t HttpsGetUtils::_bufferSize=0;
 bool HttpsGetUtils::getString(const char* url, uint8_t *& outbuf, size_t &outlen) {
   fetchBuffer(url);
   Serial.printf("\nAfter fetch, buffer size=%d\n", _bufferSize);
   if(_bufferSize) {
     // write it to Serial 
     Serial.write(_buffer,_bufferSize);
-    outbuf=(uint8_t*)malloc(sizeof(uint8_t)*12000);
+    outbuf=(uint8_t*)malloc(sizeof(uint8_t)*outlen);
     if(outbuf==NULL) log("outbuf allocate failed!");
     uint32_t outprintsize=0;
-    int result=ArduinoZlib::libmpq__decompress_zlib(_buffer, _bufferSize, outbuf, 12000,outprintsize);
-    Serial.printf("outsize=%d, result=%d\n", outprintsize,result);
+    // int result=ArduinoZlib::libmpq__decompress_zlib(_buffer, _bufferSize, outbuf, outlen,outprintsize);
+    // Serial.printf("outsize=%d, result=%d\n", outprintsize,result);
     // parseJSON((char*)outbuf, outprintsize);
     //Serial.write(outbuf,outprintsize);
     outlen=outprintsize;

@@ -16,14 +16,21 @@ bool Weather24h::get() {
   #ifdef DEBUG
   Serial.print("[HTTP] begin...\n");
   #endif DEBUG
-  // String api = "http://192.168.2.180:8081";
-  // String url = api + "/v7/weather/3d?location=" + _reqLocation +
-  //             "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+  String api = "http://192.168.2.180:8081";
+  String url = api + "/v7/weather/24h?location=" + _reqLocation +
+              "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+  // String url = "http://192.168.2.144:8082/v7/weather/24h";
+  String str = HttpsGetUtils::get(url.c_str());
+  _parseNowJson(str);
+  return true;
+
+
+/*HTTPS请求+解压GZIP，内存不足
+
   const char *url="https://192.168.2.144:8082/v7/weather/24h";
   uint8_t *outbuf=NULL;
-  size_t len=0;
-  HttpsGetUtils hg;
-  bool result = hg.getString(url, outbuf, len);
+  size_t len=11500;
+  bool result = HttpsGetUtils::getString(url, outbuf, len);
   Serial.printf("result=%d, len=%d", result, len);
   if(outbuf && len){
     Serial.printf("write to serial, buf=%x, len=%d\n", outbuf, len);
@@ -41,14 +48,22 @@ bool Weather24h::get() {
     Serial.printf("After clean, outbuf addr now=%x", outbuf);
   }
   return result;
+
+  */
 }
 
-void Weather24h::_parseNowJson(char *input, size_t inputLength) {
+
+
+
+// void Weather24h::_parseNowJson(char *input, size_t inputLength) {
+  void Weather24h::_parseNowJson(String input) {
   // std::string input;
 
-DynamicJsonDocument doc(6144);
+DynamicJsonDocument doc(8192);
 
-DeserializationError error = deserializeJson(doc, input, inputLength);
+DeserializationError error = deserializeJson(doc, input);
+// DynamicJsonDocument doc(6144);
+// DeserializationError error = deserializeJson(doc, input, inputLength);
 
 if (error) {
   Serial.print(F("deserializeJson() failed: "));

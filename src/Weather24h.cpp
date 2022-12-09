@@ -16,14 +16,14 @@ bool Weather24h::get() {
   #ifdef DEBUG
   Serial.print("[HTTP] begin...\n");
   #endif DEBUG
-  String api = "http://192.168.2.180:8081";
-  String url = api + "/v7/weather/3d?location=" + _reqLocation +
-              "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
-  url="https://192.168.2.144:8082";
+  // String api = "http://192.168.2.180:8081";
+  // String url = api + "/v7/weather/3d?location=" + _reqLocation +
+  //             "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+  const char *url="https://192.168.2.144:8082/v7/weather/24h";
   uint8_t *outbuf=NULL;
   size_t len=0;
   HttpsGetUtils hg;
-  bool result = hg.getString("https://192.168.2.144:8082/test", outbuf, len);
+  bool result = hg.getString(url, outbuf, len);
   Serial.printf("result=%d, len=%d", result, len);
   if(outbuf && len){
     Serial.printf("write to serial, buf=%x, len=%d\n", outbuf, len);

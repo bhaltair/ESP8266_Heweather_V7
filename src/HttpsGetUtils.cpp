@@ -67,6 +67,7 @@ bool HttpsGetUtils::get(const char *url) {
 }
 
 bool HttpsGetUtils::fetchBuffer(const char *url) {
+    _bufferSize=0;
     std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
     client->setInsecure();
     Serial.print("[HTTPS] begin...\n");

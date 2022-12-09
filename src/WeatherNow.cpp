@@ -1,5 +1,5 @@
 #include "WeatherNow.h"
-
+#include "HttpsGetUtils.h"
 WeatherNow::WeatherNow() {
 }
 
@@ -13,56 +13,42 @@ void WeatherNow::config(String userKey, String location, String unit, String lan
 
 // 尝试获取信息，成功返回true，失败返回false
 bool WeatherNow::get() {
-  // https请求
-    WiFiClient client;
-    HTTPClient http;
-
-  #ifdef DEBUG
-  Serial.print("[HTTP] begin...\n");
-  #endif DEBUG
-  String api = "http://192.168.2.180:8081";
-  String url = api + "/v7/weather/now?location=" + _reqLocation +
-              "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
-  if (http.begin(client, url)) {  // HTTP连接成功
-    #ifdef DEBUG
-    Serial.print("[HTTP] GET...\n");
-    #endif DEBUG
-    int httpCode = http.GET(); // 请求
-
-    if (httpCode > 0) { // 错误返回负值
-      #ifdef DEBUG
-      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-      #endif DEBUG
-      if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) { // 服务器响应
-        String payload = http.getString();
-        #ifdef DEBUG
-        Serial.println(payload);
-        #endif DEBUG
-        _parseNowJson(payload);
-        return true;
-      }
-    } else { // 错误返回负值
-      #ifdef DEBUG
-      Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-      #endif DEBUG
-      return false;
-    }
-    http.end();
-  } else { // HTTP连接失败
-    #ifdef DEBUG
-    Serial.printf("[HTTP] Unable to connect\n");
-    #endif DEBUG
-    return false;
+  // #ifdef DEBUG
+  // Serial.print("[HTTP] begin...\n");
+  // #endif DEBUG
+  // String api = "http://192.168.2.180:8081";
+  // String url = api + "/v7/weather/now?location=" + _reqLocation +
+  //             "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+            
+  const char *url = "https://192.168.2.144:8082/v7/weather/now";
+   uint8_t *outbuf=NULL;
+  size_t len=0;
+  HttpsGetUtils hg;
+  bool result = hg.getString(url, outbuf, len);
+  Serial.printf("result=%d, len=%d", result, len);
+  if(outbuf && len){
+    Serial.printf("write to serial, buf=%x, len=%d\n", outbuf, len);
+    // Serial.write(outbuf, len);
+    Serial.println("parse json");
+      _parseNowJson((char*)outbuf,len);
+  } else {
+    Serial.println("获取当前天气失败了");
   }
+  //一定要记得释放内存
+  Serial.println("clean outbuf");
+  if(outbuf!=NULL) {
+    free(outbuf);
+    outbuf=NULL;
+    Serial.printf("After clean, outbuf addr now=%x", outbuf);
+  }
+  return result;
 }
 
 // 解析Json信息
-void WeatherNow::_parseNowJson(String payload) {
-  const size_t capacity = 2*JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(5) +
-                          JSON_OBJECT_SIZE(15) + 350;
-  DynamicJsonDocument doc(capacity);
+void WeatherNow::_parseNowJson(char* input, size_t inputLength) {
+StaticJsonDocument<512> doc;
 
-  deserializeJson(doc, payload);
+DeserializationError error = deserializeJson(doc, input, inputLength);
 
   JsonObject now = doc["now"];
 

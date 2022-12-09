@@ -1,5 +1,5 @@
 #include "WeatherForecast.h"
-
+#include "HttpsGetUtils.h"
 WeatherForecast::WeatherForecast() {
 }
 
@@ -11,54 +11,36 @@ void WeatherForecast::config(String userKey, String location, String unit, Strin
 }
 
 bool WeatherForecast::get() {
-  // http请求
-    WiFiClient client;
-    HTTPClient http;
-  #ifdef DEBUG
-  Serial.print("[HTTP] begin...\n");
-  #endif DEBUG
-  String api = "http://192.168.2.180:8081";
-  String url = api + "/v7/weather/3d?location=" + _reqLocation +
-              "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
-  if (http.begin(client, url)) {  // HTTP连接成功
-    #ifdef DEBUG
-    Serial.print("[HTTP] GET...\n");
-    #endif DEBUG
-    int httpCode = http.GET(); // 请求
-
-    if (httpCode > 0) { // 错误返回负值
-      #ifdef DEBUG
-      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-      #endif DEBUG
-      if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) { // 服务器响应
-        String payload = http.getString();
-        #ifdef DEBUG
-        Serial.println(payload);
-        #endif DEBUG
-        _parseNowJson(payload);
-        return true;
-      }
-    } else { // 错误返回负值
-      #ifdef DEBUG
-      Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-      #endif DEBUG
-      return false;
-    }
-    http.end();
-  } else { // HTTP连接失败
-    #ifdef DEBUG
-    Serial.printf("[HTTP] Unable to connect\n");
-    #endif DEBUG
-    return false;
+  // String api = "http://192.168.2.180:8081";
+  // String url = api + "/v7/weather/3d?location=" + _reqLocation +
+  //             "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+  const char* url="https://192.168.2.144:8082/v7/weather/3d";
+  uint8_t *outbuf=NULL;
+  size_t len=0;
+  HttpsGetUtils hg;
+  bool result = hg.getString(url, outbuf, len);
+  Serial.printf("result=%d, len=%d", result, len);
+  if(outbuf && len){
+    Serial.printf("write to serial, buf=%x, len=%d\n", outbuf, len);
+    // Serial.write(outbuf, len);
+    Serial.println("parse json");
+      _parseNowJson((char*)outbuf,len);
+  } else {
+    Serial.println("获取3天小时天气失败了");
   }
+  //一定要记得释放内存
+  Serial.println("clean outbuf");
+  if(outbuf!=NULL) {
+    free(outbuf);
+    outbuf=NULL;
+    Serial.printf("After clean, outbuf addr now=%x", outbuf);
+  }
+  return result;
 }
 
-void WeatherForecast::_parseNowJson(String payload) {
-  const size_t capacity = 2*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(2) +
-                          JSON_OBJECT_SIZE(5) + 3*JSON_OBJECT_SIZE(26) + 1320;
-  DynamicJsonDocument doc(capacity);
-
-  DeserializationError error = deserializeJson(doc, payload);
+void WeatherForecast::_parseNowJson(char *input, size_t inputLength) {
+DynamicJsonDocument doc(1536);
+DeserializationError error = deserializeJson(doc, input, inputLength);
 
   if (error) {
     #ifdef DEBUG

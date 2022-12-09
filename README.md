@@ -1,17 +1,28 @@
 # ESP8266_Heweather
 
-- [ESP8266_Heweather](#esp8266_heweather)
+- [ESP8266\_Heweather](#esp8266_heweather)
+- [注意：和风天气已经不支持直接返回字符串，而是gzip！](#注意和风天气已经不支持直接返回字符串而是gzip)
   - [基本介绍](#基本介绍)
   - [准备工作](#准备工作)
   - [使用说明](#使用说明)
     - [获取实时天气信息](#获取实时天气信息)
     - [获取天气预报信息](#获取天气预报信息)
     - [获取空气质量信息](#获取空气质量信息)
+    - [获取24小时天气预报信息](#获取24小时天气预报信息)
+
+# 注意：和风天气已经不支持直接返回字符串，而是gzip！
+
+而ESP8266自带的https请求不支持gzip，因此只好移植开源项目zlib到本项目中，移植过程中发现ESP8266的内存实在是太小了，因此暂时使用本地的代理服务器转发。
+如果有对解压gzip有兴趣可以看看这个库 https://github.com/tignioj/ArduinoZlib
+在本项目中 HttpsGetUtils::getString 实际上已经集成改代码，只需要安装该库后再引入头文件，再取消注释调用的代码后即可。
+需要注意的是，ArduinoZlib比较消耗内存。
+
+
+
 
 ## 基本介绍
 
 **Arduino**开发平台使用**ESP8266**获取**和风天气**的第三方库。
-
 
 
 此库用于**ESP8266(NodeMCU)**物联网开发板通过**HTTPS协议**获取和风天气API所提供的免费天气信息。使用此库可以省去繁杂的HTTPS请求以及JSON解析部分，使用几行代码即可获取有效信息，大大简化了开发步骤。
@@ -108,7 +119,20 @@ AirQuality.getCategory();        // 实时空气质量指数级别
 AirQuality.getPrimary();         // 实时空气质量的主要污染物，优时返回值为NA
 ```
 
+### 获取24小时天气预报信息
+```c++
+Weather24h Weather24h;           // 建立Weather24h对象
+Weather24h.config(UserKey, Location, Unit, Lang); //配置请求信息
+String getServerCode();   
+String getLastUpdate();
+String getFxDate(int index);
+int getTemp(int index); // 获取24小时温度
+int getIconDay(int index); // 获取24小时天气图标
+String getTextDay(int index); // 获取天气描述
+int getHumidity(int index); // 获取湿度
+float getPrecip(int index); // 预测降雨量
 
+```
 
 
 

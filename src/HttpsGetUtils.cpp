@@ -1,5 +1,6 @@
 #include "HttpsGetUtils.h"
 // #include "ArduinoZlib.h" // gzip库
+#include "ArduinoUZlib.h" // gzip库
 
 HttpsGetUtils::HttpsGetUtils() {
 }
@@ -136,14 +137,12 @@ bool HttpsGetUtils::getString(const char* url, uint8_t *& outbuf, size_t &outlen
   if(_bufferSize) {
     // write it to Serial 
     Serial.write(_buffer,_bufferSize);
-    outbuf=(uint8_t*)malloc(sizeof(uint8_t)*outlen);
-    if(outbuf==NULL) log("outbuf allocate failed!");
-    uint32_t outprintsize=0;
-    // int result=ArduinoZlib::libmpq__decompress_zlib(_buffer, _bufferSize, outbuf, outlen,outprintsize);
-    // Serial.printf("outsize=%d, result=%d\n", outprintsize,result);
-    // parseJSON((char*)outbuf, outprintsize);
-    //Serial.write(outbuf,outprintsize);
-    outlen=outprintsize;
+    //outbuf=(uint8_t*)malloc(sizeof(uint8_t)*outlen);
+    //if(outbuf==NULL) log("outbuf allocate failed!");
+    int result=ArduinoUZlib::decompress(_buffer, _bufferSize,outbuf, outlen);
+    Serial.printf("outsize=%d, result=%d\n", outlen,result);
+    
+    Serial.write(outbuf,outlen);
     Serial.printf("outlen :%d\n", outlen);
     _bufferSize=0;
     return true;

@@ -1,7 +1,6 @@
 # ESP8266_Heweather
 
 - [ESP8266\_Heweather](#esp8266_heweather)
-- [注意：和风天气已经不支持直接返回字符串，而是gzip！](#注意和风天气已经不支持直接返回字符串而是gzip)
   - [基本介绍](#基本介绍)
   - [准备工作](#准备工作)
   - [使用说明](#使用说明)
@@ -9,13 +8,6 @@
     - [获取天气预报信息](#获取天气预报信息)
     - [获取空气质量信息](#获取空气质量信息)
     - [获取24小时天气预报信息](#获取24小时天气预报信息)
-
-# 注意：和风天气已经不支持直接返回字符串，而是gzip！
-
-而ESP8266自带的https请求不支持gzip，因此只好移植开源项目zlib到本项目中，移植过程中发现ESP8266的内存实在是太小了，因此暂时使用本地的代理服务器转发。
-如果有对解压gzip有兴趣可以看看这个库 https://github.com/tignioj/ArduinoZlib
-在本项目中 HttpsGetUtils::getString 实际上已经集成改代码，只需要安装该库后再引入头文件，再取消注释调用的代码后即可。
-需要注意的是，ArduinoZlib比较消耗内存。
 
 
 
@@ -33,7 +25,6 @@
 > - 只涉及常人经常关注的信息如`温度`、`风力`、`降雨`等，其它一般人不关注的信息如`露点温度`等并未解析；
 
 
-
 ## 准备工作
 
 1. 注册和风天气并获得key，详见 https://dev.heweather.com/docs/start/get-api-key；
@@ -41,6 +32,8 @@
 2. 安装ESP8266扩展程序，详见 https://github.com/esp8266/Arduino；
 
 3. 安装**ArduinoJson**库，详见 https://github.com/bblanchon/ArduinoJson；
+   
+4. 安装gzip解压库 https://github.com/tignioj/ArduinoUZlib
 
 	其他说明：
 

@@ -31,8 +31,8 @@ class Weather24h {
     String _reqUnit;     // 单位
     String _reqLang;     // 语言
 
-    void _parseNowJson(String input); // 解析json信息
-    // void _parseNowJson(char *input, size_t inputLength); // 解析json信息
+    //void _parseNowJson(String input); // 解析json信息
+     void _parseNowJson(char *input, size_t inputLength); // 解析json信息
 
 
     String _response_code = "no_init";           // API状态码

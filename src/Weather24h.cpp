@@ -5,20 +5,24 @@ Weather24h::Weather24h() {
 }
 
 void Weather24h::config(String userKey, String location, String unit, String lang) {
-  _requserKey = userKey;
-  _reqLocation = location;
-  _reqUnit = unit;
-  _reqLang = lang;
+  // _requserKey = userKey;
+  // _reqLocation = location;
+  // _reqUnit = unit;
+  // _reqLang = lang;
+  // _uri = HttpsGetUtils::host +  "/v7/weather/24h?location=" + _reqLocation +
+  //            "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+  _url =  String(HttpsGetUtils::host) +  "/v7/weather/24h?location=" + location +
+             "&key=" + userKey + "&unit=" + unit + "&lang=" + lang;// + "&gzip=n";
 }
+
+
 
 bool Weather24h::get() {
   // http请求
   #ifdef DEBUG
   Serial.print("[HTTP] begin...\n");
   #endif DEBUG
-  String api = "https://devapi.qweather.com";
-  String url = api + "/v7/weather/24h?location=" + _reqLocation +
-             "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+
   // String url = "http://192.168.2.144:8082/v7/weather/24h";
   //String str = HttpsGetUtils::get(url.c_str());
   //_parseNowJson(str);
@@ -30,7 +34,7 @@ bool Weather24h::get() {
   //const char *url="https://192.168.2.144:8082/v7/weather/24h";
   uint8_t *outbuf=NULL;
   size_t len=0;
-  bool result = HttpsGetUtils::getString(url.c_str(), outbuf, len);
+  bool result = HttpsGetUtils::getString(_url.c_str(), outbuf, len);
   Serial.printf("result=%d, len=%d", result, len);
   if(outbuf && len){
     Serial.printf("write to serial, buf=%x, len=%d\n", outbuf, len);

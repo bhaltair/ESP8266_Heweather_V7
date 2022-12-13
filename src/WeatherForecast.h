@@ -28,13 +28,14 @@ class WeatherForecast {
     int getUvIndex(int index);
 
   private:
-    const char* _host = "devapi.heweather.net"; // 服务器地址
+    // const char* _host = "devapi.heweather.net"; // 服务器地址
+    String _url;
     const int httpsPort = 443;
 
-    String _requserKey;  // 私钥
-    String _reqLocation; // 位置
-    String _reqUnit;     // 单位
-    String _reqLang;     // 语言
+    // String _requserKey;  // 私钥
+    // String _reqLocation; // 位置
+    // String _reqUnit;     // 单位
+    // String _reqLang;     // 语言
 
     void _parseNowJson(char* input, size_t inputLength); // 解析json信息
     // void _parseNowJson(String input);

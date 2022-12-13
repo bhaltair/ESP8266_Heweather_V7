@@ -18,11 +18,12 @@ class HttpsGetUtils {
 
     static bool getString(const char* url, uint8_t*& outbuf, size_t &len);
     static String get(String str);
+    static const char  *host;
 
   private:
     static bool fetchBuffer(const char* url);
-    // const char* _host = "devapi.heweather.net"; // 服务器地址
-    const char* _host = "api.heweather.local"; // 代理服务器地址
+    static const char* _host; // 服务器地址
+    
     const int httpsPort = 2053;
 
     static uint8_t _buffer[1280]; //gzip流最大缓冲区

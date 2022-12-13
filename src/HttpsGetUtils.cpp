@@ -130,6 +130,8 @@ bool HttpsGetUtils::fetchBuffer(const char *url) {
 }
 
 uint8_t HttpsGetUtils::_buffer[1280];
+const char* HttpsGetUtils::host = "https://devapi.qweather.com"; // 代理服务器地址
+// const char* HttpsGetUtils::host = "https://192.168.2.144:8081"; // 代理服务器地址
 size_t HttpsGetUtils::_bufferSize=0;
 bool HttpsGetUtils::getString(const char* url, uint8_t *& outbuf, size_t &outlen) {
   fetchBuffer(url);
@@ -139,11 +141,11 @@ bool HttpsGetUtils::getString(const char* url, uint8_t *& outbuf, size_t &outlen
     Serial.write(_buffer,_bufferSize);
     //outbuf=(uint8_t*)malloc(sizeof(uint8_t)*outlen);
     //if(outbuf==NULL) log("outbuf allocate failed!");
-    int result=ArduinoUZlib::decompress(_buffer, _bufferSize,outbuf, outlen);
-    Serial.printf("outsize=%d, result=%d\n", outlen,result);
+    ArduinoUZlib::decompress(_buffer, _bufferSize,outbuf, outlen);
+    Serial.printf("outsize=%d\n", outlen);
     
-    Serial.write(outbuf,outlen);
-    Serial.printf("outlen :%d\n", outlen);
+    // Serial.write(outbuf,outlen);
+    // Serial.printf("outlen :%d\n", outlen);
     _bufferSize=0;
     return true;
   }else {

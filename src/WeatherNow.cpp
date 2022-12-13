@@ -5,10 +5,13 @@ WeatherNow::WeatherNow() {
 
 // 配置请求信息，私钥、位置、单位、语言
 void WeatherNow::config(String userKey, String location, String unit, String lang) {
-  _requserKey = userKey;
-  _reqLocation = location;
-  _reqUnit = unit;
-  _reqLang = lang;
+  // _requserKey = userKey;
+  // _reqLocation = location;
+  // _reqUnit = unit;
+  // _reqLang = lang;
+
+    _url =  String(HttpsGetUtils::host) +  "/v7/weather/now?location=" + location +
+             "&key=" + userKey + "&unit=" + unit + "&lang=" + lang;// + "&gzip=n";
 }
 
 // 尝试获取信息，成功返回true，失败返回false
@@ -17,9 +20,9 @@ bool WeatherNow::get() {
   // Serial.print("[HTTP] begin...\n");
   // #endif DEBUG
   
-  String api = "https://devapi.qweather.com";
-  String url = api + "/v7/weather/now?location=" + _reqLocation +
-              "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
+  // String api = "https://devapi.qweather.com";
+  // String url = api + "/v7/weather/now?location=" + _reqLocation +
+  //             "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang;// + "&gzip=n";
   /*
   // String url = "http://192.168.2.144:8082/v7/weather/now";
   String str = HttpsGetUtils::get(url.c_str());
@@ -31,7 +34,7 @@ bool WeatherNow::get() {
   // const char *url = "https://192.168.2.144:8082/v7/weather/now";
    uint8_t *outbuf=NULL;
   size_t len=0;
-  bool result = HttpsGetUtils::getString(url.c_str(), outbuf, len);
+  bool result = HttpsGetUtils::getString(_url.c_str(), outbuf, len);
   Serial.printf("result=%d, len=%d", result, len);
   if(outbuf && len){
     Serial.printf("write to serial, buf=%x, len=%d\n", outbuf, len);

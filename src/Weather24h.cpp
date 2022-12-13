@@ -25,11 +25,11 @@ bool Weather24h::get() {
   //return true;
 
 
-//HTTPS请求+解压GZIP，内存不足
+//HTTPS请求+解压GZIP，内存不足                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
   //const char *url="https://192.168.2.144:8082/v7/weather/24h";
   uint8_t *outbuf=NULL;
-  size_t len=11500;
+  size_t len=0;
   bool result = HttpsGetUtils::getString(url.c_str(), outbuf, len);
   Serial.printf("result=%d, len=%d", result, len);
   if(outbuf && len){

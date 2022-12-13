@@ -25,7 +25,7 @@ bool WeatherForecast::get() {
   
   //const char* url="https://192.168.2.144:8082/v7/weather/3d";
   uint8_t *outbuf=NULL;
-  size_t len=5000;
+  size_t len=0;
   bool result = HttpsGetUtils::getString(url.c_str(), outbuf, len);
   Serial.printf("result=%d, len=%d", result, len);
   if(outbuf && len){
@@ -34,7 +34,7 @@ bool WeatherForecast::get() {
     Serial.println("parse json");
       _parseNowJson((char*)outbuf,len);
   } else {
-    Serial.println("获取3天小时天气失败了");
+    Serial.println("获取3天天气失败了");
   }
   //一定要记得释放内存
   Serial.println("clean outbuf");

@@ -20,7 +20,7 @@ bool AirQuality::get() {
   Serial.print("[HTTP] begin...\n");
   #endif DEBUG
   String api = "http://192.168.2.180:8081";
-  //String url = "https://devapi.heweather.net/v7/air/now?location=" + _reqLocation +
+  //String url = "https://devapi.qweather.com/v7/air/now?location=" + _reqLocation +
   String url = api + "/v7/air/now?location=" + _reqLocation +
               "&key=" + _requserKey + "&unit=" + _reqUnit + "&lang=" + _reqLang + "&gzip=n";
   if (http.begin(client, url)) {  // HTTP连接成功
